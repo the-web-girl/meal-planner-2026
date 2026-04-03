@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Planificateur de repas - Organisez vos repas sur 4 semaines, gérez vos recettes et générez vos listes de courses">
+  <meta name="theme-color" content="#2C1A0E">
+  <title>Meal Planner — Planificateur de repas</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- Skip link RGAA -->
+<a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" role="banner">
+  <div class="header-inner">
+    <a href="#" class="logo" aria-label="Meal Planner - Accueil">
+      <span class="logo-icon" aria-hidden="true">🍽️</span>
+      <span class="logo-text">Meal Planner<span class="logo-sub">Planificateur de repas</span></span>
+    </a>
+    <nav class="header-nav" aria-label="Navigation principale">
+      <button class="nav-btn" onclick="openRecipesManager()" aria-label="Gérer les recettes">
+        <span aria-hidden="true">📖</span><span class="label">Recettes</span>
+      </button>
+      <button class="nav-btn" onclick="openShoppingModal()" aria-label="Liste de courses">
+        <span aria-hidden="true">🛒</span><span class="label">Courses</span>
+      </button>
+      <button class="nav-btn google-btn" onclick="openGoogleCalendar()" aria-label="Synchroniser avec Google Calendar">
+        <span aria-hidden="true">📅</span><span class="label">Google Cal.</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main id="main-content" class="app-wrapper">
+
+  <!-- Navigation semaines -->
+  <div class="week-nav" role="navigation" aria-label="Navigation par semaine">
+    <div class="week-info">
+      <div class="week-label" id="week-label" aria-live="polite">Chargement…</div>
+      <div class="week-sub">Cliquez sur un repas pour voir la recette ou en ajouter un</div>
+    </div>
+
+    <div class="week-tabs" role="tablist" aria-label="Sélectionner la semaine">
+      <button class="week-tab active" role="tab" aria-selected="true"  data-week="0">Sem. 1</button>
+      <button class="week-tab"        role="tab" aria-selected="false" data-week="1">Sem. 2</button>
+      <button class="week-tab"        role="tab" aria-selected="false" data-week="2">Sem. 3</button>
+      <button class="week-tab"        role="tab" aria-selected="false" data-week="3">Sem. 4</button>
+    </div>
+
+    <div class="nav-arrows">
+      <button class="arrow-btn" onclick="prevWeek()" aria-label="Semaine précédente">‹</button>
+      <button class="arrow-btn" onclick="nextWeek()" aria-label="Semaine suivante">›</button>
+    </div>
+  </div>
+
+  <!-- Légende -->
+  <div class="meal-legend" aria-label="Légende des repas" role="list">
+    <div class="legend-item" role="listitem">
+      <span class="legend-dot" style="background:var(--breakfast)" aria-hidden="true"></span>Petit-déjeuner
+    </div>
+    <div class="legend-item" role="listitem">
+      <span class="legend-dot" style="background:var(--lunch)" aria-hidden="true"></span>Déjeuner
+    </div>
+    <div class="legend-item" role="listitem">
+      <span class="legend-dot" style="background:var(--snack)" aria-hidden="true"></span>Goûter
+    </div>
+    <div class="legend-item" role="listitem">
+      <span class="legend-dot" style="background:var(--dinner)" aria-hidden="true"></span>Dîner
+    </div>
+    <div class="legend-item" role="listitem">
+      <span class="legend-dot" style="background:linear-gradient(135deg,#FF6B9D,#4ECDC4)" aria-hidden="true"></span>Occasion spéciale
+    </div>
+  </div>
+
+  <!-- Grille planning -->
+  <section aria-label="Planning de la semaine">
+    <div class="planning-grid" id="planning-grid" role="grid" aria-live="polite">
+      <div class="loader" style="grid-column:1/-1"><div class="spinner"></div>Chargement du planning…</div>
+    </div>
+  </section>
+
+  <!-- Actions bas de page -->
+  <div class="toolbar" role="toolbar" aria-label="Actions globales">
+    <button class="btn btn-primary" onclick="openShoppingModal()">🛒 Générer la liste de courses</button>
+    <button class="btn btn-secondary" onclick="openAddRecipeModal()">+ Nouvelle recette</button>
+    <button class="btn btn-secondary" onclick="openRecipesManager()">📖 Toutes les recettes</button>
+  </div>
+
+</main>
+
+<!-- ============================================================ -->
+<!-- MODAUX                                                        -->
+<!-- ============================================================ -->
+
+<!-- ---- Ajouter un repas ---- -->
+<div class="modal-overlay" id="meal-modal" role="dialog" aria-modal="true" aria-labelledby="meal-modal-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title" id="meal-modal-title">Ajouter un repas</h2>
+      <button class="modal-close" onclick="closeModal('meal-modal')" aria-label="Fermer">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Recette sélectionnée -->
+      <div style="background:var(--warm);border-radius:var(--radius-sm);padding:.6rem .85rem;margin-bottom:1rem;font-size:.82rem;font-weight:600;color:var(--brown)" aria-live="polite" id="meal-recipe-selected">
+        Aucune recette sélectionnée
+      </div>
+
+      <!-- Grille de recettes -->
+      <div id="meal-recipe-grid" class="recipe-grid" role="radiogroup" aria-label="Sélectionner une recette" style="max-height:300px;overflow-y:auto;margin-bottom:1rem"></div>
+
+      <div style="text-align:center;margin:-.5rem 0 .75rem;color:var(--muted);font-size:.78rem">— ou —</div>
+
+      <div class="form-group">
+        <label class="form-label" for="meal-custom-input">Repas personnalisé (sans recette)</label>
+        <input type="text" id="meal-custom-input" class="form-control" placeholder="ex: Resto italien, Restes du midi…">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="meal-servings">Nombre de personnes</label>
+          <input type="number" id="meal-servings" class="form-control" value="4" min="1" max="20">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="meal-notes">Notes</label>
+          <input type="text" id="meal-notes" class="form-control" placeholder="Ex : sans gluten, adapter les quantités…">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('meal-modal')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveMeal()">✓ Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---- Détail recette ---- -->
+<div class="modal-overlay" id="recipe-detail-modal" role="dialog" aria-modal="true" aria-labelledby="recipe-detail-h" aria-hidden="true">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <h2 class="modal-title" id="recipe-detail-h">Recette</h2>
+      <button class="modal-close" onclick="closeModal('recipe-detail-modal')" aria-label="Fermer">✕</button>
+    </div>
+    <div class="modal-body" id="recipe-detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('recipe-detail-modal')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---- Journée spéciale ---- -->
+<div class="modal-overlay" id="special-day-modal" role="dialog" aria-modal="true" aria-labelledby="special-day-h" aria-hidden="true">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h2 class="modal-title" id="special-day-h">🎉 Occasion spéciale</h2>
+      <button class="modal-close" onclick="closeModal('special-day-modal')" aria-label="Fermer">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="special-day-date">
+      <input type="hidden" id="special-day-color" value="#FF6B9D">
+      <input type="hidden" id="special-day-icon"  value="🎉">
+
+      <div class="form-group">
+        <label class="form-label" for="special-day-label">Libellé de l'occasion <span class="req" aria-hidden="true">*</span></label>
+        <input type="text" id="special-day-label" class="form-control" placeholder="ex : Anniversaire, Noël, Compétition…" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Couleur</label>
+        <div class="color-picker-row" id="color-picker-row" role="radiogroup" aria-label="Choisir une couleur"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Icône</label>
+        <div class="icon-picker" id="icon-picker-row" role="radiogroup" aria-label="Choisir une icône"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('special-day-modal')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveSpecialDay()">✓ Valider</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---- Shopping ---- -->
+<div class="modal-overlay" id="shopping-modal" role="dialog" aria-modal="true" aria-labelledby="shopping-modal-h" aria-hidden="true">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <h2 class="modal-title" id="shopping-modal-h">🛒 Listes de courses</h2>
+      <button class="modal-close" onclick="closeModal('shopping-modal')" aria-label="Fermer">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Générateur -->
+      <div style="background:var(--warm);border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem;border:2px solid var(--border)">
+        <h3 style="margin-bottom:.75rem;font-size:.95rem">Générer une nouvelle liste</h3>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label" for="shopping-week-start">Début de période</label>
+            <input type="date" id="shopping-week-start" class="form-control">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label" for="shopping-week-count">Nombre de semaines</label>
+            <select id="shopping-week-count" class="form-control">
+              <option value="1">1 semaine</option>
+              <option value="2">2 semaines</option>
+              <option value="3">3 semaines</option>
+              <option value="4">4 semaines</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:.75rem">
+          <button class="btn btn-primary" id="generate-list-btn" onclick="generateShoppingList()">🛒 Générer la liste</button>
+        </div>
+      </div>
+
+      <!-- Listes existantes -->
+      <h3 style="margin-bottom:.75rem">Mes listes</h3>
+      <div id="shopping-lists-container"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('shopping-modal')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---- Détail liste de courses ---- -->
+<div class="modal-overlay" id="shopping-list-modal" role="dialog" aria-modal="true" aria-labelledby="shopping-list-title" aria-hidden="true">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <h2 class="modal-title" id="shopping-list-title" style="font-size:1rem">Ma liste de courses</h2>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn btn-secondary btn-sm" onclick="printShoppingList()" aria-label="Imprimer la liste">🖨️</button>
+        <button class="modal-close" onclick="closeModal('shopping-list-modal')" aria-label="Fermer">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:0">
+      <p style="padding:.75rem 1.25rem;font-size:.78rem;color:var(--muted);border-bottom:1px solid var(--border)">
+        Cliquez sur un article pour le cocher ✓
+      </p>
+      <div id="shopping-list-items"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('shopping-list-modal')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---- Gestionnaire recettes ---- -->
+<div class="modal-overlay" id="recipes-modal" role="dialog" aria-modal="true" aria-labelledby="recipes-modal-h" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title" id="recipes-modal-h">📖 Mes recettes</h2>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <button class="btn btn-primary btn-sm" onclick="openAddRecipeModal()">+ Nouvelle</button>
+        <button class="modal-close" onclick="closeModal('recipes-modal')" aria-label="Fermer">✕</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <!-- Barre de recherche et filtres -->
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem">
+        <div class="search-bar" role="search">
+          <span aria-hidden="true">🔍</span>
+          <input type="text" id="recipe-search-input" placeholder="Rechercher une recette…"
+                 aria-label="Rechercher une recette"
+                 oninput="onRecipeSearch(this.value)">
+        </div>
+      </div>
+      <div class="filter-chips" role="group" aria-label="Filtrer par type de repas">
+        <button class="filter-chip active" data-cat="all"       onclick="filterByCategory(this)">Tous</button>
+        <button class="filter-chip breakfast" data-cat="breakfast" onclick="filterByCategory(this)">☀️ Petit-déj</button>
+        <button class="filter-chip lunch"     data-cat="lunch"     onclick="filterByCategory(this)">🍽️ Déjeuner</button>
+        <button class="filter-chip snack"     data-cat="snack"     onclick="filterByCategory(this)">🍪 Goûter</button>
+        <button class="filter-chip dinner"    data-cat="dinner"    onclick="filterByCategory(this)">🌙 Dîner</button>
+      </div>
+      <div id="recipes-manager-grid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('recipes-modal')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---- Formulaire recette ---- -->
+<div class="modal-overlay" id="recipe-form-modal" role="dialog" aria-modal="true" aria-labelledby="recipe-form-title" aria-hidden="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title" id="recipe-form-title">Nouvelle recette</h2>
+      <button class="modal-close" onclick="closeModal('recipe-form-modal')" aria-label="Fermer">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="recipe-form" onsubmit="event.preventDefault();saveRecipe()" novalidate>
+
+        <div class="form-row">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label" for="rf-name">Nom de la recette <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="rf-name" class="form-control" placeholder="ex : Quiche lorraine" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="rf-description">Description courte</label>
+          <input type="text" id="rf-description" class="form-control" placeholder="Quelques mots pour décrire la recette">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="rf-category">Type de repas <span class="req" aria-hidden="true">*</span></label>
+            <select id="rf-category" class="form-control" required>
+              <option value="breakfast">☀️ Petit-déjeuner</option>
+              <option value="lunch" selected>🍽️ Déjeuner</option>
+              <option value="snack">🍪 Goûter</option>
+              <option value="dinner">🌙 Dîner</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="rf-servings">Nombre de personnes</label>
+            <input type="number" id="rf-servings" class="form-control" value="4" min="1" max="20">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="rf-prep-time">Temps de préparation (min)</label>
+            <input type="number" id="rf-prep-time" class="form-control" value="0" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="rf-cook-time">Temps de cuisson (min)</label>
+            <input type="number" id="rf-cook-time" class="form-control" value="0" min="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="rf-image-url">URL de l'image (optionnel)</label>
+          <input type="url" id="rf-image-url" class="form-control" placeholder="https://…">
+        </div>
+
+        <!-- Ingrédients -->
+        <div class="form-group">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+            <label class="form-label" style="margin-bottom:0">Ingrédients</label>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="addIngredientRow()">+ Ajouter</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="ing-table" id="recipe-ingredients-table" aria-label="Liste des ingrédients">
+              <thead>
+                <tr>
+                  <th scope="col">Ingrédient</th>
+                  <th scope="col" style="width:80px">Quantité</th>
+                  <th scope="col" style="width:80px">Unité</th>
+                  <th scope="col" style="width:44px"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="form-group">
+          <label class="form-label" for="rf-instructions">Instructions (une étape par ligne)</label>
+          <textarea id="rf-instructions" class="form-control" rows="6"
+                    placeholder="1. Préchauffer le four à 180°C&#10;2. Mélanger les ingrédients…"></textarea>
+        </div>
+
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('recipe-form-modal')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveRecipe()">✓ Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TOAST CONTAINER                                               -->
+<!-- ============================================================ -->
+<div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Classe utilitaire pour lecteurs d'écran -->
+<style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
+
+<script src="js/app.js"></script>
+</body>
+</html>
