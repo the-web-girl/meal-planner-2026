@@ -1,0 +1,140 @@
+PROPRIETARY LICENSE AGREEMENT / LICENCE PROPRIÉTAIRE
+
+Copyright (c) 2026 Angelique by IntA11Y - Solutions
+All rights reserved / Tous droits réservés
+
+================================================================
+ENGLISH VERSION
+================================================================
+
+1. DEFINITIONS
+
+"Application" refers to the software project available at:
+https://github.com/the-web-girl/meal-planner-2026,
+including but not limited to its source code, architecture, features, design, and documentation.
+
+"Licensor" refers to Angelique by IntA11Y - Solutions.
+
+"User" refers to any individual or legal entity accessing or using the Application.
+
+2. GRANT OF LICENSE
+
+The Licensor grants a limited, non-exclusive, non-transferable, and revocable license
+to use the Application solely for personal and non-commercial purposes.
+
+3. RESTRICTIONS
+
+The User shall NOT, directly or indirectly:
+
+- Copy, reproduce, or exploit the source code in whole or in part;
+- Sell, license, sublicense, rent, lease, or distribute the Application;
+- Modify, adapt, translate, reverse engineer, decompile, or create derivative works;
+- Use the Application or any part of it for commercial purposes;
+- Redistribute the Application, whether free or paid;
+- Remove or alter any proprietary notices.
+
+4. SAAS / SERVICE CLONING PROHIBITION
+
+The User is strictly prohibited from:
+
+- Using the Application or its code to build, offer, or operate a competing or similar service;
+- Deploying the Application (modified or not) as a hosted, SaaS, or web service;
+- Creating any product or service inspired by or substantially similar to the Application’s
+  features, business logic, user interface, or concept for commercial purposes.
+
+Any such use shall be considered a material breach of this License.
+
+5. PUBLIC REPOSITORY DISCLAIMER
+
+Availability of the source code in a public repository does NOT grant any rights
+to use, copy, modify, or distribute the Application beyond this License.
+
+6. OWNERSHIP
+
+All rights, title, and interest remain the exclusive property of the Licensor.
+
+7. TERMINATION
+
+This License terminates automatically if its terms are violated.
+Upon termination, all use must cease immediately.
+
+8. DISCLAIMER OF WARRANTY
+
+THE APPLICATION IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+9. LIMITATION OF LIABILITY
+
+THE LICENSOR SHALL NOT BE LIABLE FOR ANY DAMAGES ARISING FROM USE OF THE APPLICATION.
+
+10. GOVERNING LAW
+
+This License is governed by the laws of France.
+Disputes fall under the exclusive jurisdiction of French courts.
+
+================================================================
+VERSION FRANÇAISE
+================================================================
+
+1. DÉFINITIONS
+
+« Application » désigne le projet logiciel disponible à l’adresse :
+https://github.com/the-web-girl/meal-planner-2026,
+incluant notamment son code source, son architecture, ses fonctionnalités, son design et sa documentation.
+
+« Éditeur » désigne Angelique by IntA11Y - Solutions.
+
+« Utilisateur » désigne toute personne physique ou morale accédant ou utilisant l’Application.
+
+2. OCTROI DE LICENCE
+
+L’Éditeur accorde une licence limitée, non exclusive, non transférable et révocable,
+permettant l’utilisation de l’Application uniquement à des fins personnelles et non commerciales.
+
+3. RESTRICTIONS
+
+Il est strictement interdit à l’Utilisateur de :
+
+- Copier, reproduire ou exploiter tout ou partie du code source ;
+- Vendre, concéder en licence, sous-licencier, louer ou distribuer l’Application ;
+- Modifier, adapter, traduire, décompiler ou créer des œuvres dérivées ;
+- Utiliser l’Application à des fins commerciales ;
+- Redistribuer l’Application, gratuitement ou contre rémunération ;
+- Supprimer ou modifier toute mention de propriété.
+
+4. INTERDICTION DE CLONAGE SaaS
+
+Il est strictement interdit de :
+
+- Utiliser l’Application ou son code pour créer un service concurrent ou similaire ;
+- Déployer l’Application (modifiée ou non) en tant que service web, SaaS ou plateforme en ligne ;
+- Créer un produit ou service inspiré ou substantiellement similaire aux fonctionnalités,
+  à la logique métier, à l’interface ou au concept de l’Application à des fins commerciales.
+
+Toute violation constitue une faute grave.
+
+5. DÉPÔT PUBLIC
+
+La mise à disposition du code sur une plateforme publique ne confère aucun droit
+au-delà de ceux explicitement accordés par la présente licence.
+
+6. PROPRIÉTÉ
+
+Tous les droits restent la propriété exclusive de l’Éditeur.
+
+7. RÉSILIATION
+
+La licence est automatiquement résiliée en cas de violation.
+L’Utilisateur doit cesser immédiatement toute utilisation.
+
+8. ABSENCE DE GARANTIE
+
+L’Application est fournie « en l’état », sans garantie.
+
+9. LIMITATION DE RESPONSABILITÉ
+
+L’Éditeur ne pourra être tenu responsable des dommages liés à l’utilisation.
+
+10. DROIT APPLICABLE
+
+La présente licence est régie par le droit français.
+Les tribunaux français sont seuls compétents.
